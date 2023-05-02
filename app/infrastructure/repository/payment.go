@@ -2,6 +2,8 @@ package repository
 
 import (
 	"errors"
+	"fmt"
+	"time"
 
 	"gorm.io/gorm"
 
@@ -16,37 +18,41 @@ func NewPaymentRepository(db *gorm.DB) *PaymentRepository {
 	return &PaymentRepository{db}
 }
 
-func (r *PaymentRepository) CreatePayment(payment *model.Payment) error {
-	if err := r.db.Create(payment).Error; err != nil {
-		return err
+func (p *PaymentRepository) CreatePayment(payment *model.Payment) error {
+	payment.CreatedAt = time.Now()
+	payment.UpdatedAt = time.Now()
+	result := p.db.Create(&payment)
+	if result.Error != nil {
+		return result.Error
 	}
 	return nil
 }
 
-func (r *PaymentRepository) GetPaymentByID(paymentID uint) (*model.Payment, error) {
+func (p *PaymentRepository) GetPaymentByID(paymentID uint) (*model.Payment, error) {
 	var payment model.Payment
-	if err := r.db.First(&payment, paymentID).Error; err != nil {
-		return nil, err
+	result := p.db.First(&payment, paymentID)
+	if result.Error != nil {
+		if errors.Is(result.Error, gorm.ErrRecordNotFound) {
+			return nil, fmt.Errorf("payment not found with id: %d", paymentID)
+		}
+		return nil, result.Error
 	}
 	return &payment, nil
 }
 
-func (r *PaymentRepository) UpdatePayment(payment *model.Payment) error {
-	if payment.ID == 0 {
-		return errors.New("invalid payment id")
-	}
-	if err := r.db.Save(payment).Error; err != nil {
-		return err
+func (p *PaymentRepository) UpdatePayment(payment *model.Payment) error {
+	payment.UpdatedAt = time.Now()
+	result := p.db.Save(&payment)
+	if result.Error != nil {
+		return result.Error
 	}
 	return nil
 }
 
-func (r *PaymentRepository) DeletePayment(payment *model.Payment) error {
-	if payment.ID == 0 {
-		return errors.New("invalid payment id")
-	}
-	if err := r.db.Delete(payment).Error; err != nil {
-		return err
+func (p *PaymentRepository) DeletePayment(paymentID uint) error {
+	result := p.db.Delete(&model.Payment{}, paymentID)
+	if result.Error != nil {
+		return result.Error
 	}
 	return nil
 }

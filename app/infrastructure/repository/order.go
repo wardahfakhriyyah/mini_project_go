@@ -3,6 +3,7 @@ package repository
 import (
 	"errors"
 	"fmt"
+	"time"
 
 	"gorm.io/gorm"
 
@@ -17,38 +18,41 @@ func NewOrderRepository(db *gorm.DB) *OrderRepository {
 	return &OrderRepository{db}
 }
 
-func (r *OrderRepository) Create(order *model.Order) error {
-	result := r.db.Create(order)
+func (o *OrderRepository) CreateOrder(order *model.Order) error {
+	order.CreatedAt = time.Now()
+	order.UpdatedAt = time.Now()
+	result := o.db.Create(order)
 	if result.Error != nil {
-		return fmt.Errorf("error creating order: %v", result.Error)
+		return result.Error
 	}
 	return nil
 }
 
-func (r *OrderRepository) GetById(id uint) (*model.Order, error) {
+func (o *OrderRepository) GetOrderById(orderID uint) (*model.Order, error) {
 	var order model.Order
-	result := r.db.First(&order, id)
-	if errors.Is(result.Error, gorm.ErrRecordNotFound) {
-		return nil, fmt.Errorf("order with ID %v not found", id)
-	}
+	result := o.db.First(&order, orderID)
 	if result.Error != nil {
-		return nil, fmt.Errorf("error retrieving order: %v", result.Error)
+		if errors.Is(result.Error, gorm.ErrRecordNotFound) {
+			return nil, fmt.Errorf("order not found with id : %d", orderID)
+		}
+		return nil, result.Error
 	}
 	return &order, nil
 }
 
-func (r *OrderRepository) Update(order *model.Order) error {
-	result := r.db.Save(order)
+func (o *OrderRepository) UpdateOrder(order *model.Order) error {
+	order.UpdatedAt = time.Now()
+	result := o.db.Save(&order)
 	if result.Error != nil {
-		return fmt.Errorf("error updating order: %v", result.Error)
+		return result.Error
 	}
 	return nil
 }
 
-func (r *OrderRepository) Delete(order *model.Order) error {
-	result := r.db.Delete(order)
+func (o *OrderRepository) DeleteOrder(orderID uint) error {
+	result := o.db.Delete(&model.Order{}, orderID)
 	if result.Error != nil {
-		return fmt.Errorf("error deleting order: %v", result.Error)
+		return result.Error
 	}
 	return nil
 }

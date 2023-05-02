@@ -1,24 +1,41 @@
 package database
 
 import (
-	"database/sql"
 	"fmt"
+	"miniproject_go_wardahfdn/app/model"
 
-	_ "github.com/go-sql-driver/mysql"
+	"gorm.io/driver/mysql"
+	"gorm.io/gorm"
 )
 
-func NewMySQL() (*sql.DB, error) {
-	config := NewMySQLConfig()
+type Database struct {
+	Conn *gorm.DB
+}
 
-	db, err := sql.Open("mysql", fmt.Sprintf("%s:%s@tcp(%s:%s)/%s", config.User, config.Password, config.Host, config.Port, config.Database))
+func NewDatabase() (*Database, error) {
+	dsn := "root:@tcp(127.0.0.1:3306)/miniproject_wardah?charset=utf8mb4&parseTime=True&loc=Local"
+
+	db, err := gorm.Open(mysql.Open(dsn), &gorm.Config{})
 	if err != nil {
 		return nil, err
 	}
 
-	err = db.Ping()
+	return &Database{Conn: db}, nil
+}
+
+func (db *Database) AutoMigrate() error {
+	err := db.Conn.AutoMigrate(
+		&model.User{},
+		&model.Restaurant{},
+		&model.Menu{},
+		&model.Order{},
+		&model.Payment{},
+	)
 	if err != nil {
-		return nil, err
+		return err
 	}
 
-	return db, nil
+	fmt.Println("Auto Migration has been processed")
+
+	return nil
 }

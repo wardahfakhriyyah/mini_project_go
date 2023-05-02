@@ -1,19 +1,19 @@
 package database
 
-type MySQLConfig struct {
+type Config struct {
 	Host     string
-	Port     string
-	User     string
+	Port     int
+	Username string
 	Password string
-	Database string
+	DBName   string
 }
 
-func NewMySQLConfig() *MySQLConfig {
-	return &MySQLConfig{
+func NewConfig() *Config {
+	return &Config{
 		Host:     "localhost",
-		Port:     "3306",
-		User:     "root",
-		Password: "123",
-		Database: "miniproject",
+		Port:     3306,
+		Username: "root",
+		Password: "",
+		DBName:   "miniproject_wardah",
 	}
 }

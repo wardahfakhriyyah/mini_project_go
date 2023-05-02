@@ -18,7 +18,7 @@ func NewRestaurantRepository(db *gorm.DB) *RestaurantRepository {
 	return &RestaurantRepository{db}
 }
 
-func (r *RestaurantRepository) Create(restaurant *model.Restaurant) error {
+func (r *RestaurantRepository) CreateRestaurant(restaurant *model.Restaurant) error {
 	restaurant.CreatedAt = time.Now()
 	restaurant.UpdatedAt = time.Now()
 	result := r.db.Create(&restaurant)
@@ -28,19 +28,19 @@ func (r *RestaurantRepository) Create(restaurant *model.Restaurant) error {
 	return nil
 }
 
-func (r *RestaurantRepository) GetById(id uint) (*model.Restaurant, error) {
+func (r *RestaurantRepository) GetRestaurantByID(restaurantID uint) (*model.Restaurant, error) {
 	var restaurant model.Restaurant
-	result := r.db.First(&restaurant, id)
+	result := r.db.First(&restaurant, restaurantID)
 	if result.Error != nil {
 		if errors.Is(result.Error, gorm.ErrRecordNotFound) {
-			return nil, fmt.Errorf("restaurant not found with id: %d", id)
+			return nil, fmt.Errorf("restaurant not found with id: %d", restaurantID)
 		}
 		return nil, result.Error
 	}
 	return &restaurant, nil
 }
 
-func (r *RestaurantRepository) Update(restaurant *model.Restaurant) error {
+func (r *RestaurantRepository) UpdateRestaurant(restaurant *model.Restaurant) error {
 	restaurant.UpdatedAt = time.Now()
 	result := r.db.Save(&restaurant)
 	if result.Error != nil {
@@ -49,8 +49,8 @@ func (r *RestaurantRepository) Update(restaurant *model.Restaurant) error {
 	return nil
 }
 
-func (r *RestaurantRepository) Delete(id uint) error {
-	result := r.db.Delete(&model.Restaurant{}, id)
+func (r *RestaurantRepository) DeleteRestaurant(restaurantID uint) error {
+	result := r.db.Delete(&model.Restaurant{}, restaurantID)
 	if result.Error != nil {
 		return result.Error
 	}

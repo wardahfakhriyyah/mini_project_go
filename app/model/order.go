@@ -5,7 +5,7 @@ import (
 )
 
 type Order struct {
-	ID           uint      `gorm:"primaryKey"`
+	OrderID      uint      `gorm:"primaryKey"`
 	UserID       uint      `json:"-"`
 	RestaurantID uint      `json:"-"`
 	MenuID       uint      `json:"-"`
