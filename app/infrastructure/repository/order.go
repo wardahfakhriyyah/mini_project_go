@@ -28,6 +28,18 @@ func (o *OrderRepository) CreateOrder(order *model.Order) error {
 	return nil
 }
 
+func (o *OrderRepository) GetAllOrder() ([]*model.Order, error) {
+	var order []*model.Order
+	result := o.db.Find(&order)
+	if result.Error != nil {
+		if errors.Is(result.Error, gorm.ErrRecordNotFound) {
+			return nil, fmt.Errorf("no order found")
+		}
+		return nil, result.Error
+	}
+	return order, nil
+}
+
 func (o *OrderRepository) GetOrderById(orderID uint) (*model.Order, error) {
 	var order model.Order
 	result := o.db.First(&order, orderID)

@@ -28,6 +28,18 @@ func (r *RestaurantRepository) CreateRestaurant(restaurant *model.Restaurant) er
 	return nil
 }
 
+func (r *RestaurantRepository) GetAllRestaurant() ([]*model.Restaurant, error) {
+	var restaurant []*model.Restaurant
+	result := r.db.Find(&restaurant)
+	if result.Error != nil {
+		if errors.Is(result.Error, gorm.ErrRecordNotFound) {
+			return nil, fmt.Errorf("no restaurant found")
+		}
+		return nil, result.Error
+	}
+	return restaurant, nil
+}
+
 func (r *RestaurantRepository) GetRestaurantByID(restaurantID uint) (*model.Restaurant, error) {
 	var restaurant model.Restaurant
 	result := r.db.First(&restaurant, restaurantID)

@@ -28,6 +28,18 @@ func (m *MenuRepository) CreateMenu(menu *model.Menu) error {
 	return nil
 }
 
+func (m *MenuRepository) GetAllMenu() ([]*model.Menu, error) {
+	var menu []*model.Menu
+	result := m.db.Find(&menu)
+	if result.Error != nil {
+		if errors.Is(result.Error, gorm.ErrRecordNotFound) {
+			return nil, fmt.Errorf("no menu found")
+		}
+		return nil, result.Error
+	}
+	return menu, nil
+}
+
 func (m *MenuRepository) GetMenuById(menuID uint) (*model.Menu, error) {
 	var menu model.Menu
 	result := m.db.First(&menu, menuID)

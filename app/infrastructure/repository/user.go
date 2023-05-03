@@ -28,6 +28,18 @@ func (u *UserRepository) CreateUser(user *model.User) error {
 	return nil
 }
 
+func (u *UserRepository) GetAllUser() ([]*model.User, error) {
+	var user []*model.User
+	result := u.db.Find(&user)
+	if result.Error != nil {
+		if errors.Is(result.Error, gorm.ErrRecordNotFound) {
+			return nil, fmt.Errorf("no user found")
+		}
+		return nil, result.Error
+	}
+	return user, nil
+}
+
 func (u *UserRepository) GetUserByID(userID uint) (*model.User, error) {
 	var user model.User
 	result := u.db.First(&user, userID)
@@ -39,18 +51,6 @@ func (u *UserRepository) GetUserByID(userID uint) (*model.User, error) {
 	}
 	return &user, nil
 }
-
-// func (r *UserRepository) GetByEmail(email string) (*model.User, error) {
-// 	var user model.User
-// 	result := r.db.Where("email = ?", email).First(&user)
-// 	if result.Error != nil {
-// 		if errors.Is(result.Error, gorm.ErrRecordNotFound) {
-// 			return nil, fmt.Errorf("user not found with email: %s", email)
-// 		}
-// 		return nil, result.Error
-// 	}
-// 	return &user, nil
-// }
 
 func (u *UserRepository) UpdateUser(user *model.User) error {
 	user.UpdatedAt = time.Now()

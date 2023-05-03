@@ -28,6 +28,18 @@ func (p *PaymentRepository) CreatePayment(payment *model.Payment) error {
 	return nil
 }
 
+func (p *PaymentRepository) GetAllPayment() ([]*model.Payment, error) {
+	var payment []*model.Payment
+	result := p.db.Find(&payment)
+	if result.Error != nil {
+		if errors.Is(result.Error, gorm.ErrRecordNotFound) {
+			return nil, fmt.Errorf("no payment found")
+		}
+		return nil, result.Error
+	}
+	return payment, nil
+}
+
 func (p *PaymentRepository) GetPaymentByID(paymentID uint) (*model.Payment, error) {
 	var payment model.Payment
 	result := p.db.First(&payment, paymentID)
