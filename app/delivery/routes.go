@@ -18,7 +18,7 @@ func NewRoutes(h *Handler) *echo.Echo {
 	e := echo.New()
 
 	//user routes
-	e.POST("/users", h.CreateUser)
+	// e.POST("/users", h.CreateUser)
 	e.GET("/users", h.GetAllUser)
 	e.GET("/users/:id", h.GetUserByID)
 	e.PUT("/users/:id", h.UpdateUser)

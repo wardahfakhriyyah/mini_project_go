@@ -30,18 +30,18 @@ func NewHandler(userUC usecase.UserUseCase, restaurantUC usecase.RestaurantUseCa
 }
 
 // User handlers
-func (h *Handler) CreateUser(c echo.Context) error {
-	var user model.User
-	err := c.Bind(&user)
-	if err != nil {
-		return c.JSON(http.StatusBadRequest, map[string]string{"error": err.Error()})
-	}
-	createdUser := h.UserUseCase.CreateUser(&user)
-	if createdUser == nil {
-		return c.JSON(http.StatusInternalServerError, map[string]string{"error": "failed to create user"})
-	}
-	return c.JSON(http.StatusOK, createdUser)
-}
+// func (h *Handler) CreateUser(c echo.Context) error {
+// 	var user model.User
+// 	err := c.Bind(&user)
+// 	if err != nil {
+// 		return c.JSON(http.StatusBadRequest, map[string]string{"error": err.Error()})
+// 	}
+// 	createdUser := h.UserUseCase.CreateUser(&user)
+// 	if createdUser == nil {
+// 		return c.JSON(http.StatusInternalServerError, map[string]string{"error": "failed to create user"})
+// 	}
+// 	return c.JSON(http.StatusOK, createdUser)
+// }
 
 func (h *Handler) GetAllUser(c echo.Context) error {
 	users, err := h.UserUseCase.GetAllUser()
@@ -105,11 +105,11 @@ func (h *Handler) CreateRestaurant(c echo.Context) error {
 }
 
 func (h *Handler) GetAllRestaurant(c echo.Context) error {
-	restaurant, err := h.RestaurantUseCase.GetAllRestaurant()
+	restaurants, err := h.RestaurantUseCase.GetAllRestaurant()
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, map[string]string{"error": err.Error()})
 	}
-	return c.JSON(http.StatusOK, restaurant)
+	return c.JSON(http.StatusOK, restaurants)
 }
 
 func (h *Handler) GetRestaurantByID(c echo.Context) error {
@@ -166,11 +166,11 @@ func (h *Handler) CreateMenu(c echo.Context) error {
 }
 
 func (h *Handler) GetAllMenu(c echo.Context) error {
-	menu, err := h.MenuUseCase.GetAllMenu()
+	menus, err := h.MenuUseCase.GetAllMenu()
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, map[string]string{"error": err.Error()})
 	}
-	return c.JSON(http.StatusOK, menu)
+	return c.JSON(http.StatusOK, menus)
 }
 
 func (h *Handler) GetMenuByID(c echo.Context) error {
@@ -227,11 +227,11 @@ func (h *Handler) CreateOrder(c echo.Context) error {
 }
 
 func (h *Handler) GetAllOrder(c echo.Context) error {
-	order, err := h.OrderUseCase.GetAllOrder()
+	orders, err := h.OrderUseCase.GetAllOrder()
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, map[string]string{"error": err.Error()})
 	}
-	return c.JSON(http.StatusOK, order)
+	return c.JSON(http.StatusOK, orders)
 }
 
 func (h *Handler) GetOrderByID(c echo.Context) error {
@@ -288,11 +288,11 @@ func (h *Handler) CreatePayment(c echo.Context) error {
 }
 
 func (h *Handler) GetAllPayment(c echo.Context) error {
-	payment, err := h.PaymentUseCase.GetAllPayment()
+	payments, err := h.PaymentUseCase.GetAllPayment()
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, map[string]string{"error": err.Error()})
 	}
-	return c.JSON(http.StatusOK, payment)
+	return c.JSON(http.StatusOK, payments)
 }
 
 func (h *Handler) GetPaymentByID(c echo.Context) error {
