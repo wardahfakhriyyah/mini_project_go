@@ -4,7 +4,7 @@ import (
 	"net/http"
 	"strings"
 
-	"github.com/dgrijalva/jwt-go"
+	"github.com/golang-jwt/jwt"
 	"github.com/labstack/echo/v4"
 	"github.com/pkg/errors"
 )
@@ -25,7 +25,7 @@ func JWTMiddleware(next echo.HandlerFunc) echo.HandlerFunc {
 			if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
 				return nil, errors.Errorf("unexpected signing method: %v", token.Header["alg"])
 			}
-			return []byte("secret"), nil // change this with your own secret key
+			return []byte("secret123"), nil
 		})
 		if err != nil {
 			return echo.NewHTTPError(http.StatusUnauthorized, err.Error())

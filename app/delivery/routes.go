@@ -14,38 +14,40 @@ type Routes struct {
 	PaymentUseCase    usecase.PaymentUseCase
 }
 
-func NewRoutes(h *Handler) *echo.Echo {
+func NewRoutes(h *Handler, jwtMiddleware echo.MiddlewareFunc, jsonMiddleware echo.MiddlewareFunc) *echo.Echo {
 	e := echo.New()
 
-	//user routes
-	// e.POST("/users", h.CreateUser)
+	e.Use(jsonMiddleware)
+	e.Use(jwtMiddleware)
+
+	// User Routes
 	e.GET("/users", h.GetAllUser)
 	e.GET("/users/:id", h.GetUserByID)
 	e.PUT("/users/:id", h.UpdateUser)
 	e.DELETE("/users/:id", h.DeleteUser)
 
-	//restaurant routes
+	// Restaurant Routes
 	e.POST("/restaurants", h.CreateRestaurant)
 	e.GET("/restaurants", h.GetAllRestaurant)
 	e.GET("/restaurants/:id", h.GetRestaurantByID)
 	e.PUT("/restaurants/:id", h.UpdateRestaurant)
 	e.DELETE("/restaurants/:id", h.DeleteRestaurant)
 
-	//menu routes
+	// Menu Routes
 	e.POST("/menus", h.CreateMenu)
 	e.GET("/menus", h.GetAllMenu)
 	e.GET("/menus/:id", h.GetMenuByID)
 	e.PUT("/menus/:id", h.UpdateMenu)
 	e.DELETE("/menus/:id", h.DeleteMenu)
 
-	//order routes
+	// Order Routes
 	e.POST("/orders", h.CreateOrder)
 	e.GET("/orders", h.GetAllOrder)
 	e.GET("/orders/:id", h.GetOrderByID)
 	e.PUT("/orders/:id", h.UpdateOrder)
 	e.DELETE("/orders/:id", h.DeleteOrder)
 
-	//payment routes
+	// Payment Routes
 	e.POST("/payments", h.CreatePayment)
 	e.GET("/payments", h.GetAllPayment)
 	e.GET("/payments/:id", h.GetPaymentByID)

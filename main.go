@@ -1,43 +1,36 @@
 package main
 
 import (
-	"log"
+	"miniproject_go_wardahfdn/app/infrastructure/database"
 
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
-
-	"miniproject_go_wardahfdn/app/delivery"
-	"miniproject_go_wardahfdn/app/infrastructure/database"
-	"miniproject_go_wardahfdn/app/infrastructure/repository"
-	"miniproject_go_wardahfdn/app/usecase"
 )
 
 func main() {
-	db := database.InitDatabase()
+	// Database Configuration
+	db, err := database.NewDatabase()
+	if err != nil {
+		panic(err)
+	}
+	// Auto Migrate
+	err = db.AutoMigrate()
+	if err != nil {
+		panic(err)
+	}
+
+	// Setup Echo
 	e := echo.New()
 
+	// Middleware
 	e.Use(middleware.Logger())
 	e.Use(middleware.Recover())
+	jsonMiddleware := middleware.BodyDump(func(c echo.Context, reqBody, resBody []byte) {
+		// Do something with request and response body
+	})
+	e.Use(jsonMiddleware)
 
-	userRepo := repository.NewUserRepository(db)
-	userUC := usecase.NewUserUseCase(userRepo)
-	delivery.NewUserHandler(e, userUC)
-
-	restaurantRepo := repository.NewRestaurantRepository(db)
-	restaurantUC := usecase.NewRestaurantUseCase(restaurantRepo)
-	delivery.NewRestaurantHandler(e, restaurantUC)
-
-	menuRepo := repository.NewMenuRepository(db)
-	menuUC := usecase.NewMenuUseCase(menuRepo)
-	delivery.NewMenuHandler(e, menuUC)
-
-	orderRepo := repository.NewOrderRepository(db)
-	orderUC := usecase.NewOrderUseCase(orderRepo, restaurantRepo, menuRepo)
-	delivery.NewOrderHandler(e, orderUC)
-
-	paymentRepo := repository.NewPaymentRepository(db)
-	paymentUC := usecase.NewPaymentUseCase(paymentRepo, orderRepo)
-	delivery.NewPaymentHandler(e, paymentUC)
-
-	log.Fatal(e.Start(":8081"))
+	// Start Server
+	port := ":8080"
+	e.Logger.Fatal(e.Start(port))
 }

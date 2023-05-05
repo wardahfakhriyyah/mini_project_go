@@ -7,8 +7,6 @@ import (
 	"github.com/golang-jwt/jwt"
 )
 
-//app/delivery/middleware.go
-
 func JWTMiddleware(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		authorizationHeader := r.Header.Get("Authorization")
